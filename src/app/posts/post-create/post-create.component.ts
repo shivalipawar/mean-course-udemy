@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { PostService } from '../posts.service';
 
 @Component({
   selector : 'app-post-create',
@@ -6,8 +8,8 @@ import { Component } from '@angular/core';
   styleUrls :['./post-create.component.css']
 })
 export class PostCreateComponent{
-postValue='NO CONTENT';
-enteredValue='';
+
+  constructor(public postService: PostService){}
 
 /*Method with click event n marker variable way */
   // onAddPost(postInput:HTMLTextAreaElement){
@@ -15,7 +17,11 @@ enteredValue='';
   //   this.postValue =postInput.value;
   //   alert("Post Created");
   // }
-  onAddPost(){
-    this.postValue =this.enteredValue;
+  onAddPost(form:NgForm){
+    //this.postValue =this.enteredValue;
+    if(!form.valid) return;
+    this.postService.addPosts(form.value.title,form.value.content);
+    form.resetForm();
   }
+  
 }
