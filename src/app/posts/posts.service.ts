@@ -42,15 +42,17 @@ export class PostService{
     }
 
     addPosts(title:string,content:string){
-        const post : Post = {id:null, title:title, content:content};
-        this.http.post<{message:string}>('http://localhost:3000/api/posts',post)
+        const post : Post = {id:"null", title:title, content:content};
+        this.http.post('http://localhost:3000/api/posts',post)
         .subscribe((resData)=>{
-          console.log(resData);
+          console.log("Result Data is "+JSON.stringify(resData));
+          console.log("Post to be pushed is "+JSON.stringify(post));
           this.posts.push(post);
+          console.log("this.posts after adding "+JSON.stringify(this.posts));
           this.postsUpdate.next([...this.posts]);
         },
         (err)=>{
-          console.log("Error occured while posting data"+err);
+          console.log("Error occured while posting data"+JSON.stringify(err));
         })
     }
 }

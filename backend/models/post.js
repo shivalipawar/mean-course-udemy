@@ -6,5 +6,5 @@ const postSchema = mongoose.Schema({
   content : {type:String, required :true}
 })
 
-//
+//Retrurns above blueprint.
 module.exports = mongoose.model('Post',postSchema);

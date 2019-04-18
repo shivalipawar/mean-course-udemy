@@ -27,38 +27,52 @@ app.use((req,res,next)=>{
   next();
 })
 
-//GET
-app.use('/api/posts',(req,res,next)=>{
-
-  // const posts =[
-  //   {id:'11',title:"Java",content:"Coffee"},
-  //   {id:'22',title:"Ionic",content:"Cake"},
-  //   {id:'33',title:"Ruby",content:"Gem"},
-  //   {id:'44',title:"Go",content:"Lang"},
-  // ]
-
-  Post.find().then(doc =>{
-    console.log(doc);
-    //Should be in then as its a sync call.
-    return res.status(200).json({
-      message:"Posts fetched successfully",
-      posts: doc
-    })
-  });
-})
-
+console.log("Going towards the http methods now");
 //POST
 app.post('/api/posts',(req,res,next)=>{
   //const post = req.body;
-  const post =new Post({
+  console.log("Req is :"+req);
+  const post =new Post({          //Here new Post will create object of type Post schema we have declared in post.js
     title : req.body.title,
     content :req.body.content
   });
-  console.log(post);
-  post.save();    //This is mongosse gives with any model.
-  res.status(201).json({
-    message :"Posts added successfully"       // This is optional we cant even send anything.
-  });
+  console.log("Post is "+ post);
+  post.save().then(createdPost => {		  
+    res.status(201).json({		  
+      message: "Post added successfully",		  
+      postId: createdPost._id		  
+    });		
+  }); 
 })
+
+
+//GET
+// app.use('/api/posts',(req,res,next)=>{
+
+//   // const posts =[
+//   //   {id:'11',title:"Java",content:"Coffee"},
+//   //   {id:'22',title:"Ionic",content:"Cake"},
+//   //   {id:'33',title:"Ruby",content:"Gem"},
+//   //   {id:'44',title:"Go",content:"Lang"},
+//   // ]
+
+//   Post.find().then(doc =>{
+//     console.log("Documents is : "+doc);
+//     //Should be in then as its a sync call.
+//     return res.status(200).json({
+//       message:"Posts fetched successfully",
+//       posts: doc
+//     })
+//   });
+// })
+app.get("/api/posts", (req, res, next) => {		  
+  Post.find().then(documents => {		    
+    res.status(200).json({		    
+      message: "Posts fetched successfully!",		    
+      posts: documents		      
+    });		      
+    })
+  });		  
+
 
 module.exports = app;
