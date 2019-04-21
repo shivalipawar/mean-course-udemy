@@ -41,18 +41,45 @@ export class PostService{
         return this.postsUpdate.asObservable();
     }
 
+    getPost(id:string){
+      //return {...this.posts.find(p => p.id === id)};
+      return this.http.get<{_id:string , title :string, content :string}>('http://localhost:3000/api/posts/'+id);
+    }
+
     addPosts(title:string,content:string){
         const post : Post = {id:"null", title:title, content:content};
-        this.http.post('http://localhost:3000/api/posts',post)
+        this.http.post<{message:string , postId:string }>('http://localhost:3000/api/posts',post)
         .subscribe((resData)=>{
-          console.log("Result Data is "+JSON.stringify(resData));
-          console.log("Post to be pushed is "+JSON.stringify(post));
+          const id = resData.postId;
+          post.id = id;
           this.posts.push(post);
-          console.log("this.posts after adding "+JSON.stringify(this.posts));
           this.postsUpdate.next([...this.posts]);
         },
         (err)=>{
           console.log("Error occured while posting data"+JSON.stringify(err));
         })
+    }
+
+    updatePosts(id:string , title:string, content:string){
+      const post :Post = { id:id, title:title, content:content};
+      this.http.put("http://localhost:3000/api/posts",post)
+      .subscribe(res => {
+        // console.log(res)
+        const updatePosts = [...this.posts];      //Create copy of posts
+        const oldIndex = updatePosts.findIndex(p => p.id === post.id);
+        updatePosts[oldIndex] = post;
+        this.posts = updatePosts;             //This is immutable way of updating the posts.
+        this.postsUpdate.next([...this.posts]);
+      });
+    }
+
+    deletePost(postId:any){
+      this.http.delete('http://localhost:3000/api/posts/'+postId)
+      .subscribe(()=>{
+        //console.log("Deleted");
+        const updatedPost = this.posts.filter(post => post.id !== postId);
+        this.posts = updatedPost;
+        this.postsUpdate.next([...this.posts]);
+      })
     }
 }
