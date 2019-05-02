@@ -2,8 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
-const Post = require('./models/post')
+const postRoutes = require('./routes/posts');
 
 const app = express();    //This is executing express() and return as app
 //Express app is a chain of middleware which we apply to incoming requests
@@ -24,86 +23,14 @@ app.use((req,res,next)=>{
   res.setHeader("Access-Control-Allow-Headers",
     "Origin,X-Requested-With,Content-Type,Accept")
   res.setHeader("Access-Control-Allow-Methods",
-    "GET,POST,PATCH,DELETE,OPTIONS");
+    "GET,POST,PATCH,PUT,DELETE,OPTIONS");
   next();
 })
-app.use(cors())
+app.use(cors());
+
+app.use("/api/posts",postRoutes);    //To make express aware of the routes and redirect only when api/posts
 
 console.log("Going towards the http methods now");
-//POST
-app.post('/api/posts',(req,res,next)=>{
-  //const post = req.body;
-  console.log("Req is :"+req);
-  const post =new Post({          //Here new Post will create object of type Post schema we have declared in post.js
-    title : req.body.title,
-    content :req.body.content
-  });
-  console.log("Post is "+ post);
-  post.save().then(createdPost => {		  
-    res.status(201).json({		  
-      message: "Post added successfully",		  
-      postId: createdPost._id		  
-    });		
-  }); 
-})
 
-
-//GET
-// app.use('/api/posts',(req,res,next)=>{
-
-//   // const posts =[
-//   //   {id:'11',title:"Java",content:"Coffee"},
-//   //   {id:'22',title:"Ionic",content:"Cake"},
-//   //   {id:'33',title:"Ruby",content:"Gem"},
-//   //   {id:'44',title:"Go",content:"Lang"},
-//   // ]
-
-//   Post.find().then(doc =>{
-//     console.log("Documents is : "+doc);
-//     //Should be in then as its a sync call.
-//     return res.status(200).json({
-//       message:"Posts fetched successfully",
-//       posts: doc
-//     })
-//   });
-// })
-app.get("/api/posts", (req, res, next) => {		  
-  Post.find().then(documents => {		    
-    res.status(200).json({		    
-      message: "Posts fetched successfully!",		    
-      posts: documents		      
-    });		      
-    })
-  });		  
-
-  app.get("/api/posts/:id", (req,res,next) =>{
-    Post.findById(req.params.id).then(post =>{
-      if(post){
-        res.status(200).json(post);
-      }
-      else{
-        res.status(404).json({message:"Post not found!"});
-      }
-    })
-  })
-
-  app.delete("/api/posts/:id", (req,res,next) =>{
-    Post.deleteOne({_id: req.params.id}).then(result =>{
-      console.log(result);
-      res.status(200).json({message:"Post deleted"});
-    })
-  })
-
-  app.put("/api/posts/:id",(req,res,next)=>{
-    const post = new Post({
-      _id : req.body.id,
-      title : req.body.title,
-      content : req.body.content
-    })
-    Post.updateOne({_id: req.params.id},post).then(result => {
-      console.log(result);
-      res.status(200).json({message:"Update Successful!"});
-    })
-  })
 
 module.exports = app;

@@ -1,11 +1,12 @@
 <!--<textarea rows="6" [value]="postValue" #postInput></textarea>-->
 <mat-card>
-  <form (submit)="onSavePost(postForm)" #postForm="ngForm">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <form (submit)="onSavePost(postForm)" #postForm="ngForm" *ngIf="!isLoading">
       <mat-form-field>
           <input matInput 
           type="text" 
-          [ngModel] ="post?.title"
           name="title"
+          [ngModel] ="post?.title"
           required
           placeholder="Post Title"
           #title = "ngModel">
@@ -13,11 +14,17 @@
         <mat-error *ngIf="title.invalid">
             Title is <strong>required</strong>
           </mat-error>
+
+          <div>
+            <button mat-stroked-button type="button" (click)="filepicker.click()">Pick a image</button>      <!-- If type of button not given takes as submit and doesnt allow to click as other fields are not filled-->
+            <input type="file" #filePicker>
+          </div>
+
       <mat-form-field>
         <textarea matInput 
         rows="6" 
-        [ngModel]="post?.content"
         name="content"
+        [ngModel]="post?.content"
         required
         placeholder="Post Content"
         #content = "ngModel"></textarea>
