@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { PostService } from '../posts.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Post } from '../post.model';
+import { mimeType } from './mime-type.validator';
 
 @Component({
   selector : 'app-post-create',
@@ -13,6 +14,7 @@ export class PostCreateComponent{
   enteredTitle = "";
   enteredContent = "";
   isLoading=false;
+  imagePreview = null;
   form : FormGroup ;
   private mode = 'create'
   private postId :string;
@@ -24,7 +26,8 @@ ngOnInit(){
 
   this.form = new FormGroup({
     'title': new FormControl(null,{validators:[Validators.required, Validators.minLength(3)]}),
-    'content' : new FormControl(null,Validators.required)
+    'content' : new FormControl(null,Validators.required),
+    'image': new FormControl(null,{validators:[Validators.required], asyncValidators : [mimeType]})
   })
 
   this.route.paramMap.subscribe((paramMap : ParamMap)=>{
@@ -68,6 +71,20 @@ ngOnInit(){
       this.postService.updatePosts(this.postId,this.form.value.title,this.form.value.content);
     }
     this.form.reset();
+  }
+
+  onImagePicked(event : Event){
+    const file = (event.target as HTMLInputElement).files[0];
+    this.form.patchValue({image:file});       //This is used to update on a single control of the form
+    this.form.get('image').updateValueAndValidity();
+
+    const reader = new FileReader();
+    //Below method is async so we have used a callback.
+    reader.onload = () =>{
+      this.imagePreview = reader.result;
+      console.log("imagePreview ",this.imagePreview);
+    }
+    reader.readAsDataURL(file);
   }
   
 }
