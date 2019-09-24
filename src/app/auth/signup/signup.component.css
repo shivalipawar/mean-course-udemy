@@ -1,0 +1,12 @@
+mat-card{
+    margin:auto;
+    margin-left:15%;
+  }
+
+mat-form-field{
+  width: 100%;
+}
+
+mat-spinner{
+  margin: auto;
+}
