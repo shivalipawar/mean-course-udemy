@@ -9,7 +9,7 @@ const userRoutes = require('./routes/user');
 const app = express();    //This is executing express() and return as app
 //Express app is a chain of middleware which we apply to incoming requests
 
-mongoose.connect("mongodb+srv://shivali:lQF9ciO6oEVQq9tK@cluster0-z0r7w.mongodb.net/node-angular?retryWrites=true",{ useNewUrlParser: true })
+mongoose.connect("mongodb+srv://shivali:lQF9ciO6oEVQq9tK@cluster0-z0r7w.mongodb.net/node-angular",{ useNewUrlParser: true })
 .then(()=>{
   console.log("Connection successful to database");
 })
